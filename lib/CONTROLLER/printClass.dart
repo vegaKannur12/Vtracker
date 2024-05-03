@@ -192,7 +192,9 @@ class PrintController extends ChangeNotifier {
     }
   }
 
-  location(String place, String datetime,String datetoday, BuildContext context) async {
+  location(String place, String datetime, String datetoday,String street,String local,String post,String adminarea,String cntry,String hash,
+  String isocode,String name,String subadmin,String sublocal,String lati,String longi,String activity,
+      BuildContext context) async {
     // NetConnection.networkConnection(context).then((value) async {
     //   if (value == true) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -205,7 +207,21 @@ class PrintController extends ChangeNotifier {
         'location_info': place,
         'user_id': uid,
         'device_info': fp,
-        'l_date': datetime
+        'l_date': datetime,
+        'Street':street,
+        'Locality':local,
+        'PostalCode':post,
+        'AdministrativeArea':adminarea,
+        'Country':cntry,
+        'HashCode':hash,
+        'ISOCountryCode':isocode,
+        'Name':name,
+        'SubAdministrativeArea':subadmin,
+        'SubLocality':sublocal,
+        'latitude':lati,
+        'longitude':longi,
+        'activity':activity,
+        
       };
       // ignore: avoid_print
       print("loc body----$body");
@@ -221,7 +237,8 @@ class PrintController extends ChangeNotifier {
       print("location map----$map");
       await locationHistory(datetoday, context);
       notifyListeners();
-    } catch (e) {
+    } 
+    catch (e) {
       // ignore: avoid_print
       print(e);
       return null;
@@ -242,7 +259,7 @@ class PrintController extends ChangeNotifier {
       Uri url = Uri.parse("https://trafiqerp.in/rapi/get_loct.php");
       Map body = {
         'l_date': date,
-        'fp' : fp
+        'fp': fp
         // '25-04-2024'
       };
       // ignore: avoid_print

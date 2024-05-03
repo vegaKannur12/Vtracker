@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -5,8 +7,11 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location2/CONTROLLER/printClass.dart';
+import 'package:location2/mapModel.dart';
+import 'package:location2/mapPage.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -18,7 +23,7 @@ class _HomeState extends State<Home> {
   late Position currentposition;
   String? formattedTime;
   String? date;
-  
+  Timer? timer;
   TextEditingController dateInput = TextEditingController();
   String formattedDate = "";
   Future _determinePosition() async {
@@ -57,15 +62,53 @@ class _HomeState extends State<Home> {
         DateTime now = DateTime.now();
         String datetoday = DateFormat('dd-MM-yyyy').format(DateTime.now());
         currentposition = position;
+        print("Street :${place.street}");
+        print("Locality :${place.locality}");
+        print("PostalCode :${place.postalCode}");
+        print("AdministrativeArea :${place.administrativeArea}");
+        print("Country :${place.country}");
+        print("HashCode :${place.hashCode}");
+        print("ISOCountryCode :${place.isoCountryCode}");
+        print("Name :${place.name}");
+        print("SubAdministrativeArea :${place.subAdministrativeArea}");
+        print("SubLocality :${place.subLocality}");
+        print("SubThoroughfare :${place.subThoroughfare}");
+        print("Thoroughfare :${place.thoroughfare}");
+
         currentAddress =
             "${place.street}, ${place.locality}, ${place.postalCode}, ${place.administrativeArea}, ${place.country}";
-        Provider.of<PrintController>(context, listen: false)
-            .location(currentAddress.toString(), "$now",datetoday, context);
-       
+        Provider.of<PrintController>(context, listen: false).location(
+            currentAddress.toString(),
+            "$now",
+            datetoday,
+            "${place.street}",
+            "${place.locality}",
+            "${place.postalCode}",
+            "${place.administrativeArea}",
+            "${place.country}",
+            "${place.hashCode}",
+            "${place.isoCountryCode}",
+            "${place.name}",
+            "${place.subAdministrativeArea}",
+            "${place.subLocality}",
+            "${position.latitude}",
+            "${position.longitude}",
+            "0",
+            context);
       });
     } catch (e) {
       print(e);
     }
+  }
+
+  void googleMap() async {
+    String googleUrl = "comgooglemaps://?center=11.8684223,75.3654577";
+    // "https://www.google.com/maps/search/?api=1&query=11.8684223,75.3654577";
+
+    if (await canLaunchUrl(Uri.parse(googleUrl))) {
+      await launchUrl(Uri.parse(googleUrl));
+    } else
+      throw ("Couldn't open google maps");
   }
 
   @override
@@ -94,6 +137,20 @@ class _HomeState extends State<Home> {
     );
 
     super.initState();
+    // timer =
+    //     Timer.periodic(Duration(seconds: 5), (Timer t) => _determinePosition()
+    //         //  timerFun()
+    //         );
+  }
+
+  timerFun() {
+    print("....................................................$formattedTime");
+  }
+
+  @override
+  void dispose() {
+    timer!.cancel();
+    super.dispose();
   }
 
   @override
@@ -152,6 +209,23 @@ class _HomeState extends State<Home> {
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     )),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                // MapSample
+                                MapExample(
+                                    latitude: currentposition.latitude,
+                                    longitude: currentposition.longitude)));
+                    // googleMap();
+                  },
+                  child: Text("Open GoogleMap"),
+                ),
                 SizedBox(
                   height: 40,
                 ),
@@ -199,40 +273,56 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(
                   height: 40,
-                ),value.histryLoad?SpinKitCircle(color: Colors.blue,):
-                value.locHistryList.isEmpty
-                    ? Container(child: Center(child: Text("No Data"),),)
-                    : Expanded(
-                      child: ListView.builder(
-                          itemCount: value.locHistryList.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                Card(
-                                  child: ListTile(
-                                    title: Column(
-                                      children: [
-                                        Text(value.locHistryList[index]
-                                                ['location_info']
-                                            .toString()),
-                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                              Text("${value.locHistryList[index]
-                                                ['date']
-                                            .toString()}",style: TextStyle(fontWeight: FontWeight.w500),),
-                                            Text("${value.locHistryList[index]
-                                                ['time']
-                                            .toString()}",style: TextStyle(fontWeight: FontWeight.w500))
-
-                                            ],)
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            );
-                          }),
-                    )
+                ),
+                value.histryLoad
+                    ? SpinKitCircle(
+                        color: Colors.blue,
+                      )
+                    : value.locHistryList.isEmpty
+                        ? Container(
+                            child: Center(
+                              child: Text("No Data"),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                                itemCount: value.locHistryList.length,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    children: [
+                                      Card(
+                                        child: ListTile(
+                                          title: Column(
+                                            children: [
+                                              Text(value.locHistryList[index]
+                                                      ['location_info']
+                                                  .toString()),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${value.locHistryList[index]['date'].toString()}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                  Text(
+                                                      "${value.locHistryList[index]['time'].toString()}",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500))
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }),
+                          )
               ],
             );
           },

@@ -174,7 +174,9 @@ class _RegistrationState extends State<Registration> {
                       validator: (text) {
                         if (text == null || text.isEmpty) {
                           return 'Please Enter Phone Number';
-                        } else if (text.length != 10) {
+                        } 
+                        else if (text.length != 10) 
+                        {
                           return 'Please Enter Valid Phone No ';
                         }
                         return null;
