@@ -91,7 +91,7 @@ class PrintController extends ChangeNotifier {
 
           // ignore: avoid_print
           print("fingerprint......$fp1");
-          prefs.setString("fp", fp!);
+          prefs.setString("fp", fp!);notifyListeners();
           if (map["os"] == null || map["os"].isEmpty) {
             isLoading = false;
             notifyListeners();
@@ -176,6 +176,7 @@ class PrintController extends ChangeNotifier {
       } else {
         prefs.setString("st_uname", userName);
         prefs.setString("st_pwd", password);
+        notifyListeners();
         // ignore: use_build_context_synchronously
         // initDb(context, "from login");
         Navigator.push(
@@ -192,9 +193,23 @@ class PrintController extends ChangeNotifier {
     }
   }
 
-  location(String place, String datetime, String datetoday,String street,String local,String post,String adminarea,String cntry,String hash,
-  String isocode,String name,String subadmin,String sublocal,String lati,String longi,String activity,
-      BuildContext context) async {
+  location(
+      String place,
+      String datetime,
+      String datetoday,
+      String street,
+      String local,
+      String post,
+      String adminarea,
+      String cntry,
+      String hash,
+      String isocode,
+      String name,
+      String subadmin,
+      String sublocal,
+      String lati,
+      String longi,
+      String activity) async {
     // NetConnection.networkConnection(context).then((value) async {
     //   if (value == true) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -208,20 +223,19 @@ class PrintController extends ChangeNotifier {
         'user_id': uid,
         'device_info': fp,
         'l_date': datetime,
-        'Street':street,
-        'Locality':local,
-        'PostalCode':post,
-        'AdministrativeArea':adminarea,
-        'Country':cntry,
-        'HashCode':hash,
-        'ISOCountryCode':isocode,
-        'Name':name,
-        'SubAdministrativeArea':subadmin,
-        'SubLocality':sublocal,
-        'latitude':lati,
-        'longitude':longi,
-        'activity':activity,
-        
+        'Street': street,
+        'Locality': local,
+        'PostalCode': post,
+        'AdministrativeArea': adminarea,
+        'Country': cntry,
+        'HashCode': hash,
+        'ISOCountryCode': isocode,
+        'Name': name,
+        'SubAdministrativeArea': subadmin,
+        'SubLocality': sublocal,
+        'latitude': lati,
+        'longitude': longi,
+        'activity': "1",
       };
       // ignore: avoid_print
       print("loc body----$body");
@@ -235,17 +249,16 @@ class PrintController extends ChangeNotifier {
       var map = jsonDecode(response.body);
       // ignore: avoid_print
       print("location map----$map");
-      await locationHistory(datetoday, context);
+      await locationHistory(datetoday);
       notifyListeners();
-    } 
-    catch (e) {
+    } catch (e) {
       // ignore: avoid_print
       print(e);
       return null;
     }
   }
 
-  locationHistory(String date, BuildContext context) async {
+  locationHistory(String date) async {
     // NetConnection.networkConnection(context).then((value) async {
     //   if (value == true) {
     SharedPreferences prefs = await SharedPreferences.getInstance();

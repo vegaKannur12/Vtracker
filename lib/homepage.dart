@@ -7,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location2/CONTROLLER/printClass.dart';
+import 'package:location2/MapView.dart';
 import 'package:location2/mapModel.dart';
 import 'package:location2/mapPage.dart';
 import 'package:provider/provider.dart';
@@ -93,8 +94,7 @@ class _HomeState extends State<Home> {
             "${place.subLocality}",
             "${position.latitude}",
             "${position.longitude}",
-            "0",
-            context);
+            "0");
       });
     } catch (e) {
       print(e);
@@ -217,11 +217,18 @@ class _HomeState extends State<Home> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) =>
-                                // MapSample
-                                MapExample(
-                                    latitude: currentposition.latitude,
-                                    longitude: currentposition.longitude)));
+                            builder: (_) => MapView(
+                                latitude: currentposition.latitude,
+                                longitude: currentposition.longitude)));
+
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (_) =>
+                    //             MapSample(
+                    //             // MapExample(
+                    //                 latitude: currentposition.latitude,
+                    //                 longitude: currentposition.longitude)));
                     // googleMap();
                   },
                   child: Text("Open GoogleMap"),
@@ -265,7 +272,7 @@ class _HomeState extends State<Home> {
                         setState(() {
                           dateInput.text = formattedDate;
                           Provider.of<PrintController>(context, listen: false)
-                              .locationHistory(formattedDate, context);
+                              .locationHistory(formattedDate);
                         });
                       } else {}
                     },

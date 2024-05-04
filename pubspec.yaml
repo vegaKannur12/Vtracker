@@ -52,8 +52,11 @@ dependencies:
   google_maps_flutter: ^2.6.1
   permission_handler: ^11.3.1
   syncfusion_flutter_maps: ^25.1.41
-  flutter_background_service: ^5.0.5
+  flutter_background_service:  ^5.0.1
+  flutter_background_service_android: ^6.0.1
   flutter_local_notifications: ^17.1.0
+  webview_flutter: ^4.7.0
+  
   # flutter_isolate: ^2.0.5-pre
   # flutter_geocoder: ^0.2.2-nullsafety
  
